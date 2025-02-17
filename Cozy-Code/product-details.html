@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Basic meta tags for character encoding and mobile responsiveness -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Details</title>
+    
+    <!-- Link to Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Link to an external CSS file for additional styles -->
+    <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+    <!-- Main container for the product details -->
+    <div class="container my-5">
+        <div class="row">
+            <!-- Product image section -->
+            <div class="col-md-6">
+                <img id="productImage" src="" alt="Product Image" class="img-fluid mb-3" />
+            </div>
+
+            <!-- Product details section (name, description, price, options) -->
+            <div class="col-md-6">
+                <h1 id="productName" style="font-family: cursive"></h1>
+                <p id="productDescription"></p>
+                <h3 id="productPrice"></h3>
+
+                <div class="row">
+                    <!-- Color Selector dropdown -->
+                    <div class="col-md-6">
+                        <label for="colorSelect">Choose Color:</label>
+                        <select id="colorSelect" class="form-select mb-3">
+                            <option value="Red">Red</option>
+                            <option value="Blue">Blue</option>
+                            <option value="Green">Green</option>
+                            <option value="Black">Black</option>
+                        </select>
+                    </div>
+
+                    <!-- Quantity input field -->
+                    <div class="col-md-6">
+                        <label for="quantityInput">Quantity:</label>
+                        <input type="number" id="quantityInput" class="form-control mb-3" value="1" min="1" />
+                    </div>
+                </div>
+
+                <!-- Button to go back to the home page -->
+                <a href="mainpage.html" class="btn btn-success" style="margin-right: 50px">
+                    <span class="icon" style="margin-right: 15px">
+                        <ion-icon name="home-outline"></ion-icon>
+                    </span>Home
+                </a>
+
+                <!-- Button to add the item to the cart -->
+                <button id="addToCartBtn" class="btn btn-success">
+                    <span class="icon" style="margin-right: 15px">
+                        <ion-icon name="cart-outline"></ion-icon>
+                    </span>Add to Cart
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification element that appears after adding to cart -->
+    <div id="notification" class="notification" style="display: none"></div>
+
+    <!-- Link to Bootstrap JS for interactivity -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Fetch product ID from the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get("id");
+
+        // Sample product data with options
+        const products = [
+
+            { id: 1, name: "Notebook A5", price: 5, description: "A high-quality A5 notebook with smooth pages, perfect for daily journaling or note-taking.", img: "https://stickerrificstore.com/cdn/shop/files/8B9300DA-5AEF-437D-B05D-EB98FB0A0543_700x700.jpg?v=1708660505", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 2, name: "Ring Notebook A5", price: 10, description: "A ring-bound A5 notebook with durable covers and easy page turning, ideal for both school and work.", img: "https://www.cesca.co.uk/wp-content/uploads/2020/11/Cesca285-31-Dark-Grey-Soft-Touch-Wiro-A5-Notebook.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 3, name: "Paper Pad", price: 3, description: "A plain paper pad suitable for sketches, notes, or brainstorming your ideas.", img: "https://m.media-amazon.com/images/I/71AXs1I-HdL.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 4, name: "Fountain Pen", price: 15, description: "A stylish fountain pen with smooth ink flow, perfect for elegant writing and signatures.", img: "https://lamune.co.th/wp-content/uploads/2021/03/38079006.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 5, name: "Penco Prime Timber", price: 12, description: "A premium mechanical pencil designed with a natural wooden feel, combining style and function.", img: "https://lamune.co.th/wp-content/uploads/2024/08/000000008418-13-xl.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 6, name: "Drawing Pencil Set", price: 8, description: "A set of high-quality drawing pencils with varying hardness for detailed sketches and shading.", img: "https://lamune.co.th/wp-content/uploads/2022/02/ShinHan_pencilset2.jpg", options: { type: "none" } },
+            { id: 7, name: "Touch Drawing Pencil", price: 3, description: "A precision pencil for artists and professionals seeking smooth, high-quality graphite strokes.", img: "https://lamune.co.th/wp-content/uploads/2022/02/ShinHan_pencil-4H.jpg", options: { type: "hardness", values: ["HB", "2B", "4B", "6B"] } },
+            { id: 8, name: "Scissors", price: 6, description: "Durable, sharp scissors for all your cutting needs, whether for crafts or office tasks.", img: "https://www.papersmiths.co.uk/cdn/shop/files/August-Scissors-Image-1.jpg?v=1721302613&width=713", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 9, name: "Clear Folder", price: 2, description: "A transparent folder to organize and protect important documents, perfect for office or school.", img: "https://inwfile.com/s-cz/34hmz5.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 10, name: "Erasers", price: 1, description: "Soft, non-smudge erasers that cleanly remove pencil marks without damaging the paper.", img: "https://lamune.co.th/wp-content/uploads/2024/04/000000010665-02-xl.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 11, name: "Rulers", price: 2, description: "A sturdy and clear ruler for precise measurements, great for school or design projects.", img: "https://www.thejournalshop.com/cdn/shop/products/item-dp3378-m-01-dl_720x.jpg?v=1652650775", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 12, name: "Staplers", price: 5, description: "Compact and reliable staplers that neatly fasten documents together for easy organization.", img: "https://www.thejournalshop.com/cdn/shop/products/35270_2_720x.jpg?v=1652683470", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 13, name: "Sharpeners", price: 2, description: "Efficient pencil sharpeners that give a perfect point without breaking the pencil lead.", img: "https://www.thejournalshop.com/cdn/shop/products/06030000_460x.png?v=1652694267", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 14, name: "Sticky Notes", price: 4, description: "Translucent sticky notes for quick reminders and easy-to-move annotations in books or documents.", img: "https://www.papersmiths.co.uk/cdn/shop/products/Stalogy_translucent_sticky_notes_plain-1.jpg?v=1679415418&width=713", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 15, name: "Penco Clips", price: 4, description: "Strong and stylish metal clips, perfect for holding papers together or adding a decorative touch.", img: "https://www.thejournalshop.com/cdn/shop/products/pla_clip_2_540x.png?v=1652653656", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 16, name: "Office Scissors", description: "Durable, sharp scissors for all your cutting needs, whether for crafts or office tasks.", price: 8, img: "https://m.media-amazon.com/images/I/71szdHbqgBL._AC_SL1500_.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 17, name: "Binder Clips", price: 3,description: "Strong and stylish metal clips, perfect for holding papers together or adding a decorative touch.", img: "https://m.media-amazon.com/images/I/616KDzn8agL._AC_SL1500_.jpg", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+            { id: 18, name: "Staedler Eraser", price: 3, description: "Soft, non-smudge erasers that cleanly remove pencil marks without damaging the paper.", img: "https://pim-cdn0.ofm.co.th/products/original/1006255.jpg?v=20240729&x-image-process=image/format,webp", options: { type: "color", values: ["Red", "Blue", "Green", "Black"] } },
+
+        ];
+
+        // Find the product based on the ID from the URL
+        const product = products.find((p) => p.id == productId);
+
+        // Update cart badge showing the number of items in the cart
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById("cartBadge").textContent = totalItems;
+        }
+
+        // Check if the product exists
+        if (product) {
+            // Update product details on the page
+            document.getElementById("productName").textContent = product.name;
+            document.getElementById("productDescription").textContent = product.description;
+            document.getElementById("productPrice").textContent = `$${product.price}`;
+            document.getElementById("productImage").src = product.img;
+
+            const colorSelect = document.getElementById("colorSelect");
+            const quantityInput = document.getElementById("quantityInput");
+
+            // Handle product options (color or other)
+            if (product.options.type === "color") {
+                // Show color options in the dropdown
+                colorSelect.innerHTML = product.options.values.map(color => `<option value="${color}">${color}</option>`).join('');
+                colorSelect.parentElement.style.display = "block"; // Show color selection
+            } else if (product.options.type === "hardness") {
+                // Show hardness options if applicable
+                colorSelect.innerHTML = product.options.values.map(hardness => `<option value="${hardness}">${hardness}</option>`).join('');
+                colorSelect.parentElement.querySelector("label").textContent = "Choose Hardness:"; // Change label
+                colorSelect.parentElement.style.display = "block"; // Show hardness selection
+            } else {
+                // Hide the selector for products without options
+                colorSelect.parentElement.style.display = "none";
+            }
+
+            // Add product to cart when the "Add to Cart" button is clicked
+            document.getElementById("addToCartBtn").addEventListener("click", () => {
+                const selectedOption = colorSelect.value; // Get selected color or option
+                const quantity = parseInt(quantityInput.value); // Get quantity
+
+                // Get cart from localStorage or create a new one
+                let cart = JSON.parse(localStorage.getItem("cart")) || [];
+                const existingItem = cart.find((item) => item.id == product.id && item.option == selectedOption);
+
+                if (existingItem) {
+                    // If the item already exists in the cart, update its quantity
+                    existingItem.quantity += quantity;
+                } else {
+                    // Otherwise, add the new item to the cart
+                    cart.push({ ...product, option: selectedOption, quantity: quantity });
+                }
+
+                // Save the updated cart to localStorage
+                localStorage.setItem("cart", JSON.stringify(cart));
+
+                // Show a notification confirming the item has been added to the cart
+                showNotification(`${quantity}x ${product.name} (${selectedOption}) has been added to your cart!`);
+
+                // Update the cart badge to reflect the new number of items
+                updateCartBadge();
+            });
+        } else {
+            // If no product is found, display an error message
+            document.body.innerHTML = "<h1>Product not found</h1>";
+        }
+
+        // Function to show a notification on the screen
+        function showNotification(message) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.style.display = "block";
+            notification.style.opacity = "1";
+
+            // Fade out the notification after 1 second
+            setTimeout(() => {
+                notification.style.opacity = "0";
+                setTimeout(() => {
+                    notification.style.display = "none";
+                }, 500);
+            }, 1000);
+        }
+
+        // Update the cart badge when the page loads
+        window.onload = updateCartBadge;
+
+    </script>
+
+    <!-- Ionicons for icons in the buttons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+    <!-- Additional styles for product image, notification, and buttons -->
+    <style>
+        #productImage {
+            width: 500px;
+            height: auto;
+            border-radius: 25px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #e98074;
+            color: white;
+            padding: 15px;
+            border-radius: 25px;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .btn-success {
+            margin-top: 50px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</body>
+
+</html>

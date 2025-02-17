@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <!-- Bootstrap CSS for responsive design -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Linking custom styles -->
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+  <!-- Header section with store name and tagline -->
+  <div class="header text-center">
+    <h1>Cozy Quill</h1>
+    <p>Your One-Stop Shop for All Stationery Needs</p>
+  </div>
+
+  <!-- Main checkout container -->
+  <div class="container">
+    <h3>Your Order</h3>
+    <!-- Order summary table to show cart items -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody id="orderSummary">
+        <!-- Order details will be dynamically inserted here -->
+      </tbody>
+    </table>
+
+    <h3>Shipping Address</h3>
+    <!-- Shipping address form -->
+    <form class="row g-3" id="myForm" onsubmit="printInfo(); return false;">
+      <!-- Input fields for shipping information -->
+      <div class="col-md-5">
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstName" required />
+      </div>
+      <div class="col-md-5">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastName" required />
+      </div>
+      <div class="col-md-2">
+        <label for="phone" class="form-label">Phone No.</label>
+        <!-- 'oninput' event calls 'validatePhoneNumber' function each time the user types -->
+        <input type="text" class="form-control" id="phone" required oninput="validatePhoneNumber(this)" />
+      </div>
+      <div class="col-md-6">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" required />
+      </div>
+      <div class="col-md-6">
+        <label for="postCode" class="form-label">Post Code</label>
+        <input type="text" class="form-control" id="postCode" required />
+      </div>
+      <div class="col-12">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" id="address" required />
+      </div>
+      <div class="col-md-6">
+        <label for="city" class="form-label">City</label>
+        <input type="text" class="form-control" id="city" required />
+      </div>
+      <div class="col-md-3">
+        <label for="state" class="form-label">State</label>
+        <input type="text" class="form-control" id="state" required />
+      </div>
+      <div class="col-md-3">
+        <label for="province" class="form-label">Province</label>
+        <input type="text" class="form-control" id="province" required />
+      </div>
+      <!-- Terms and conditions checkbox -->
+      <div class="col-12">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="terms" required />
+          <label class="form-check-label" for="terms">I agree to the terms and conditions.</label>
+        </div>
+      </div>
+
+      <!-- Buttons to go back to cart or submit the form -->
+      <div class="col-12 d-flex justify-content-between">
+        <button type="button" class="btn btn-success" onclick="window.location.href='cart.html';">Back to Cart</button>
+        <button type="submit" class="btn btn-success">Submit form</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Modal for displaying order summary and form details -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Order Summary</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Button to toggle display of form details -->
+          <button class="btn btn-secondary mb-3" id="toggleFormDetails">Show Form Details</button>
+          <div id="formDetails" style="display: none;">
+            <!-- Form details will be dynamically inserted here -->
+          </div>
+          <!-- Order summary details inside the modal -->
+          <h5>Order Summary:</h5>
+          <ul id="orderSummaryModal">
+            <!-- Modal order summary details will be dynamically inserted here -->
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger" onclick="continueShopping()">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript links for Bootstrap and jQuery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+
+  <script>
+    // Function to add items to the cart
+    function addToCart(product) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let existingItem = cart.find(item => item.id === product.id && item.option === product.option);
+      if (existingItem) {
+        existingItem.quantity += product.quantity; // Update quantity if item already exists
+      } else {
+        cart.push(product); // Add new item if it doesn't exist
+      }
+      localStorage.setItem('cart', JSON.stringify(cart)); // Save the updated cart
+    }
+
+    // Toggle form details in modal
+    document.getElementById('toggleFormDetails').addEventListener('click', function () {
+      const formDetails = document.getElementById('formDetails');
+      formDetails.style.display = (formDetails.style.display === 'none' || formDetails.style.display === '') ? 'block' : 'none';
+      this.textContent = formDetails.style.display === 'block' ? 'Hide Form Details' : 'Show Form Details';
+    });
+
+    // Function to display order summary in the table and modal
+    function displayOrderSummary() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const orderSummary = document.getElementById('orderSummary');
+      const orderSummaryModal = document.getElementById('orderSummaryModal');
+      orderSummary.innerHTML = ''; // Clear existing content
+      orderSummaryModal.innerHTML = ''; // Clear existing modal content
+      let totalCost = 0;
+
+      // Check if the cart is empty
+      if (cart.length === 0) {
+        orderSummary.innerHTML = '<tr><td colspan="3" class="text-center">Your cart is empty.</td></tr>';
+        orderSummaryModal.innerHTML = '<li>Your cart is empty.</li>';
+        return;
+      }
+
+      // Loop through cart items to display them
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity; // Calculate total cost of item
+        totalCost += itemTotal;
+        const optionDisplay = item.option ? ` (${item.option})` : '';
+
+        // Append items to the table
+        orderSummary.innerHTML += `
+          <tr>
+            <td>${item.name}${optionDisplay}</td>
+            <td>${item.quantity}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+          </tr>`;
+        // Append items to the modal
+        orderSummaryModal.innerHTML += `<li>${item.quantity} x ${item.name}${optionDisplay} @ $${item.price.toFixed(2)} = $${itemTotal.toFixed(2)}</li>`;
+      });
+
+      // Display the total cost
+      orderSummary.innerHTML += `
+        <tr>
+          <td colspan="2" class="text-end"><strong>Total</strong></td>
+          <td><strong>$${totalCost.toFixed(2)}</strong></td>
+        </tr>`;
+      orderSummaryModal.innerHTML += `<p><strong>Total:</strong> $${totalCost.toFixed(2)}</p>`;
+    }
+
+    // Function to print the form information and show it in the modal
+    function printInfo() {
+      // Retrieve form values
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const postCode = document.getElementById('postCode').value;
+      const termsAccepted = document.getElementById('terms').checked ? "Yes" : "No";
+
+      // Concatenate the full address
+      const address = document.getElementById('address').value;
+      const city = document.getElementById('city').value;
+      const state = document.getElementById('state').value;
+      const province = document.getElementById('province').value;
+      const fullAddress = `${address}, ${city}, ${state}, ${province}`;
+
+      // Inject the form details into the modal
+      const formDetails = document.getElementById('formDetails');
+      formDetails.innerHTML = `
+        <p><strong>First Name:</strong> ${firstName} ${lastName}</p>
+        <p><strong>Phone No.:</strong> ${phone}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Post Code:</strong> ${postCode}</p>
+        <p><strong>Address:</strong> ${fullAddress}</p>
+        <p><strong>Terms Accepted:</strong> ${termsAccepted}</p>
+      `;
+
+      // Display order summary in modal
+      displayOrderSummary();
+
+      // Show the modal
+      new bootstrap.Modal(document.getElementById('exampleModal')).show();
+    }
+
+    // Function to clear the cart and continue shopping
+    function continueShopping() {
+      localStorage.removeItem('cart'); // Clear cart data
+      window.location.href = 'mainpage.html'; // Redirect to main page
+    }
+
+    // Initial call to display the order summary
+    displayOrderSummary();
+
+    // Function to restrict the input in the Phone Number
+    // This function is triggered whenever the user types in the phone number field
+    function validatePhoneNumber(input) {
+      // The 'replace' function removes any non-numeric characters from the input
+      // \D is a regular expression that matches any character that is not a digit (0-9)
+      // 'g' is a global flag that ensures all non-digit characters are replaced
+      input.value = input.value.replace(/\D/g, '');
+    }
+  </script>
+</body>
+
+</html>
+
+<!-- Custom styles -->
+<style>
+  .header {
+    background-image: url(https://images.pexels.com/photos/5088008/pexels-photo-5088008.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+    height: 300px;
+    background-position: bottom center;
+    margin-bottom: 20px;
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Button styling */
+  .btn-success {
+    background-color: #e98074;
+    border: none;
+    color: white;
+    border-radius: 25px;
+    padding: 10px 20px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    margin-bottom: 100px;
+  }
+
+  .btn-success:hover {
+    background-color: #333;
+    color: white;
+  }
+
+  .container h2 {
+    font-family: Helvetica;
+  }
+</style>

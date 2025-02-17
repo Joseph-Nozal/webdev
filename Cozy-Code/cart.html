@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Shopping Cart</title>
+  <!-- Bootstrap CSS for responsive design and pre-built styling -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Linking custom styles -->
+  <link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+  <!-- Header section with the store name and tagline -->
+  <div class="header text-center">
+    <h1>Cozy Quill</h1>
+    <p>Your One-Stop Shop for All Stationery Needs</p>
+  </div>
+
+  <!-- Cart Content -->
+  <div class="container my-4">
+    <h2>Shopping Cart</h2>
+    <!-- Table to display cart items -->
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <!-- Table headers for the cart -->
+          <th>Product</th>
+          <th style="width: 150px">Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th style="width: 50px">Remove</th>
+        </tr>
+      </thead>
+      <tbody id="cartItems">
+        <!-- Cart items will be dynamically injected here using JavaScript -->
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-between">
+      <!-- Button to go back to the main shopping page -->
+      <a href="mainpage.html" class="btn btn-success">Continue Shopping</a>
+      <!-- Button to proceed to checkout -->
+      <button class="btn btn-success" id="checkoutButton">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- JavaScript to handle the cart functionality -->
+  <script>
+    // Function to retrieve the cart from localStorage
+    const getCart = () => {
+      const cart = localStorage.getItem("cart");
+      return cart ? JSON.parse(cart) : [];
+    };
+
+    // Function to save the cart back to localStorage
+    const saveCart = (cart) => {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    };
+
+    // Function to display the cart items in the table
+    const displayCart = () => {
+      const cart = getCart();
+      const cartItems = document.getElementById("cartItems");
+      cartItems.innerHTML = "";  // Clear the current content
+      let totalPrice = 0;  // To calculate the total price of the cart
+
+      // If the cart is empty, show a message
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<tr><td colspan="5" class="text-center">Your cart is empty.</td></tr>';
+        return;
+      }
+
+      // Loop through each item in the cart and add it to the table
+      cart.forEach((item) => {
+        const itemTotal = item.price * item.quantity;  // Calculate total for each item
+        totalPrice += itemTotal;  // Add to total price
+
+        const optionDisplay = item.option ? ` (${item.option})` : '';  // Optional variant display
+
+        // Add each item as a row in the table
+        cartItems.innerHTML += `
+          <tr>
+            <td>${item.name}${optionDisplay}</td>
+            <td>
+              <!-- Input for quantity change -->
+              <input type="number" value="${item.quantity}" min="1" class="form-control" 
+              onchange="updateQuantity(${item.id}, '${item.option}', this.value)">
+            </td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+            <td>
+              <!-- Button to remove the item from the cart -->
+              <button class="btn btn-danger btn-sm" 
+              onclick="removeItem(${item.id}, '${item.option}')">&times;</button>
+            </td>
+          </tr>`;
+      });
+
+      // Add the total price row at the bottom
+      cartItems.innerHTML += `
+        <tr>
+          <td colspan="3" class="text-end"><strong>Total</strong></td>
+          <td colspan="2"><strong>$${totalPrice.toFixed(2)}</strong></td>
+        </tr>`;
+    };
+
+    // Function to update the quantity of an item
+    const updateQuantity = (id, option, quantity) => {
+      if (quantity < 1) {
+        quantity = 1;  // Ensure the quantity is at least 1
+      }
+      const cart = getCart();
+      const item = cart.find((item) => item.id === id && item.option === option);
+      if (item) {
+        item.quantity = parseInt(quantity);  // Update the item's quantity
+        saveCart(cart);  // Save the updated cart
+        displayCart();  // Redisplay the cart
+      }
+    };
+
+    // Function to remove an item from the cart
+    const removeItem = (id, option) => {
+      let cart = getCart();
+      // Filter out the item to be removed
+      cart = cart.filter((item) => !(item.id === id && item.option === option));
+      saveCart(cart);  // Save the updated cart
+      displayCart();  // Redisplay the cart
+    };
+
+    // Function to check if the cart is empty before proceeding to checkout
+    const checkCartAndProceed = () => {
+      const cart = getCart();
+      if (cart.length === 0) {
+        alert("Your cart is empty. Please add items before proceeding to checkout.");
+      } else {
+        window.location.href = 'checkout.html';  // Redirect to checkout page
+      }
+    };
+
+    // Event listener to display the cart and enable checkout functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      displayCart();  // Display the cart when the page loads
+
+      // Ensure the checkout button works
+      const checkoutButton = document.getElementById("checkoutButton");
+      checkoutButton.addEventListener("click", checkCartAndProceed);
+    });
+  </script>
+
+  <!-- Internal styling for the page -->
+  <style>
+    /* General body styling */
+    .body {
+      background-color: white !important;
+    }
+
+    /* Header section styling */
+    .header {
+      background-image: url(https://images.pexels.com/photos/5088008/pexels-photo-5088008.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+      height: 300px;
+      background-position: bottom center;
+      margin-bottom: 20px;
+      border-radius: 0;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    /* Styling for the buttons */
+    .btn-success {
+      background-color: #e98074;
+      border: none;
+      color: white;
+      border-radius: 25px;
+      padding: 10px 20px;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+
+    /* Hover effect for the buttons */
+    .btn-success:hover {
+      background-color: #333;
+      color: white;
+    }
+
+    /* Styling for the h2 in the container */
+    .container h2 {
+      font-family: Helvetica;
+    }
+  </style>
+</body>
+
+</html>

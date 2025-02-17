@@ -1,0 +1,402 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  
+  
+}
+
+/* ------- Sidebar Styles ------- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 100vh;
+  background: white;
+  overflow: hidden;
+  transition: width 0.5s ease;
+  z-index: 1000;
+  border: #333 solid 1px;
+}
+
+.sidebar:hover {
+  width: 250px;
+}
+
+.sidebar ul {
+  padding: 250px 0 0 0; /* Adjust the padding-top to lower content */
+  margin: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  width: 100%;
+}
+
+.sidebar ul li a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 15px;
+  height: 60px;
+  width: 100%;
+  text-decoration: none;
+  background: transparent;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.sidebar ul li a:hover {
+  background: #f3f3f3;
+  transform: scale(1.08);
+}
+
+.sidebar ul li a .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 60px;
+  font-size: 1.5em;
+  color: #333;
+  transform: translateX(-24px);
+}
+.sidebar ul li a .text {
+  flex: 1;
+  font-size: 1em;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar:hover ul li a .text {
+  opacity: 1;
+  transform: translateX(-15px);
+}
+
+.bottom {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transition: width 0.5s ease;
+}
+
+.top {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  transition: width 0.5s ease;
+}
+
+
+/* Ensure sidebar dropdown aligns left of the category */
+.sidebar .dropdown-menu {
+  position: absolute;
+  left: 100%; /* Moves the dropdown away from the sidebar */
+  transform: translateX(-15px); /* Pulls dropdown towards the left side of the screen */
+  margin-left: -10px; /* Adjust to bring it closer to the category */
+}
+
+/* Fix spacing issue in dropdown */
+.sidebar .dropdown-menu .dropdown-item {
+  padding: 10px 20px; /* Adjust spacing around each item */
+  margin: 0; /* Remove any margin */
+}
+
+/* Ensure the dropdown does not stick too close to the edge of the screen */
+.sidebar .dropdown-menu {
+  padding: 0; /* Remove any additional padding */
+  width:  50px; /* Adjust width to fit content */
+  
+}
+
+/* Sidebar menu general styling */
+.sidebar ul {
+  padding-left: 0px;
+}
+
+.sidebar .menu li {
+  margin-bottom: 5px;
+}
+
+.sidebar .menu li a {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  text-decoration: none;
+}
+
+
+/* Adjust badge size */
+.cart .badge {
+  font-size: 0.75rem;
+  padding: 0.25em 0.5em;
+  z-index: 1; /* Keep it on top of the icon */
+}
+
+/* Positioning the badge to touch the top of the icon */
+.cart .position-absolute {
+  top: -10px; /* Adjust this value to move the badge up */
+  left: 60%; /* Adjust this value to move the badge more to the left */
+  transform: translate(-50%, -50%); /* Center the badge */
+  z-index: 1;
+}
+
+#cart-count-badge{
+  margin-left: -30%;
+}
+
+
+/* Adjusting the logo position and size */
+.logo {
+  display: flex;
+  justify-content: center; /* Centers the logo horizontally */
+  align-items: center;
+  padding-top: 20px; /* Initial padding when sidebar is collapsed */
+  transition: padding 0.5s ease, margin 0.5s ease;
+  width: 100%; /* Make the logo container span full width */
+}
+
+/* Logo size when collapsed */
+.logo img {
+  width: 40px; /* Smaller size for collapsed state */
+  height: auto;
+  transition: width 0.5s ease;
+  transform: translateX(-5px);
+}
+
+/* Adjust logo size and keep it horizontally centered when expanded */
+.sidebar:hover .logo {
+  padding-top: 50px; /* Add padding at the top to prevent it from touching the top of the sidebar */
+  justify-content: center; /* Ensure logo remains horizontally centered */
+}
+
+.sidebar:hover .logo img {
+  width: 100px; /* Adjusted size for expanded sidebar */
+  transform: translateX(50px);
+  transition: width 0.5s ease;
+}
+
+/* Ensure the logo is centered horizontally */
+.sidebar:hover .logo {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Removing hover effects for the logo */
+.sidebar .logo a:hover {
+  background: none;
+  transform: none;
+}
+
+
+
+
+/* Main Content Styles */
+.container-fluid {
+  padding: 20px;
+  margin-left: 60px; /* Account for collapsed sidebar */
+  transition: margin-left 0.5s ease;
+  position: relative;
+  background-color: rgba(255, 226, 190, 0.216);
+  
+}
+
+.sidebar:hover ~ .container-fluid {
+  margin-left: 250px; /* Adjust margin when sidebar is expanded */
+}
+
+/* Header Section */
+.header {
+  background-image: url(https://images.pexels.com/photos/5088017/pexels-photo-5088017.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1);
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 500px;
+  margin-bottom: 50px;
+  border-radius: 10px;
+  margin-left: 1%;
+  margin-right: 1%;
+  border: #333 solid 1px;
+  
+}
+
+.header h1 {
+  font-size: 70pt;
+  font-family: cursive;
+}
+
+/* Hover Effect on Header Text */
+.header h1,
+.header p {
+  transition: transform 0.3s ease, color 0.3s ease;
+  text-shadow: 0 0 20px #313131; /* glow */
+}
+
+.header p {
+  padding-top: 15px;
+}
+
+.header h1:hover,
+.header p:hover {
+  transform: scale(1.05);
+  color: #ffcc00;
+}
+
+
+/* Search bar */
+.search-container {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 100;
+}
+
+.sticky {
+  position: sticky;
+  top: 25px;
+  margin-left: 2%;
+  width: calc(100% - 60px);
+  z-index: 100;
+  padding: 10px 0;
+}
+
+.search-container input {
+  max-width: 100%;
+  border-radius: 25px;
+  
+
+}
+
+#searchBar {
+  border: #333 solid;
+}
+
+/* Product Section */
+.products {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+}
+
+.products h2 {
+  margin-bottom: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  font-family: cursive;
+}
+
+.products h2:hover {
+  transform: scale(1.05);
+}
+
+/* Hover Effect on Cards */
+.card {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 300px;
+  transition: transform 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  border-color: #333;
+}
+
+/* Center Text in Cards */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Custom Button Styles */
+.btn-success {
+  border: 1px solid #333;
+  background-color: transparent;
+  color: black;
+  border-radius: 25px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background-color: #e98074;
+  border: none;
+  color: white;
+}
+
+/* Responsive Layout */
+@media (min-width: 992px) {
+  .products .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 991px) {
+  .products .row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.search-container input {
+  max-width: 90%;
+  border-radius: 25px;
+  margin-left: 80px;
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .products .row {
+    grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
+  }
+
+  .search-container input {
+    max-width: 90%;
+    border-radius: 25px;
+    margin-left: 80px;
+    margin-right: 50px;
+  }
+}
+.search-container{
+  max-width: 90%;
+}
+
+
+
+
